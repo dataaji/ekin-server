@@ -1,0 +1,18 @@
+# Blokir akses langsung ke file dokumen. Dokumen hanya boleh dibuka lewat
+# download.php / zip.php (yang memeriksa login). Ini menjaga berkasmu tetap privat.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>
+
+# Lapis kedua: nonaktifkan handler PHP/CGI di folder ini supaya berkas yang
+# diunggah tidak akan pernah dieksekusi sebagai program. (Sengaja TIDAK memakai
+# "php_flag engine off" karena sebagian server, mis. LiteSpeed, membalasnya
+# dengan "Forbidden: PHP engine is disable" — folder ini sudah dikunci penuh di atas.)
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .cgi .pl .py .jsp .asp .aspx .shtml
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .cgi .pl .py .jsp .asp .aspx .shtml
+AddType text/plain .php .phtml .phar .cgi .pl .py .html .htm .svg
+Options -ExecCGI -Indexes

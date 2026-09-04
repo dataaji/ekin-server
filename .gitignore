@@ -1,0 +1,21 @@
+# ==== Rahasia & data pengguna — JANGAN diunggah ke GitHub ====
+# Konfigurasi berisi password database (isi sendiri di server, lihat config.example.php)
+config.php
+
+# Database SQLite (berisi data & hash password pengguna)
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# Berkas unggahan pengguna (bukti dukung, Ekin) — privat
+uploads/*
+!uploads/.htaccess
+
+# Log & artefak
+*.log
+*.zip
+*.bak
+
+# Berkas sistem
+Thumbs.db
+.DS_Store

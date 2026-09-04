@@ -1,0 +1,45 @@
+# Jangan tampilkan daftar isi folder
+Options -Indexes
+
+# Lindungi file konfigurasi & sistem dari akses langsung
+<FilesMatch "^(config\.php|bootstrap\.php|auth_style\.php|\.user\.ini)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Lindungi berkas pendukung yang tidak perlu dibuka publik
+# (log server lokal, database, catatan pemasangan, skrip .bat)
+<FilesMatch "\.(log|db|sqlite|sqlite3|md|bat|ini|bak|sql)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Cadangan: blokir folder data/ dan uploads/ dari sini juga, kalau-kalau
+# .htaccess di dalam folder itu ikut terhapus saat menyalin file.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(data|uploads)/ - [F,L]
+</IfModule>
+
+# (Mematikan mesin PHP HANYA dilakukan di uploads/.htaccess, TIDAK di sini —
+#  kalau ditaruh di root, seluruh situs ikut mati.)
+
+# Header keamanan dasar
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "same-origin"
+</IfModule>
+
+# Halaman default
+DirectoryIndex index.php
