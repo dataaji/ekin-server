@@ -24,11 +24,26 @@ Options -Indexes
   </IfModule>
 </FilesMatch>
 
-# Cadangan: blokir folder data/ dan uploads/ dari sini juga, kalau-kalau
-# .htaccess di dalam folder itu ikut terhapus saat menyalin file.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Cadangan: blokir folder data/ dan uploads/ dari sini juga, kalau-kalau
+  # .htaccess di dalam folder itu ikut terhapus saat menyalin file.
   RewriteRule ^(data|uploads)/ - [F,L]
+
+  # ===== URL rapi: sembunyikan ".php" di address bar =====
+  # 1) Bila pengunjung membuka .../namahalaman.php, alihkan ke .../namahalaman
+  #    (query string ikut terbawa). Endpoint di bawah DIKECUALIKAN supaya
+  #    pemanggilan JS/unduhan tetap jalan.
+  RewriteCond %{THE_REQUEST} \s/+([^./\s?]+)\.php[\s?] [NC]
+  RewriteCond %1 !^(api|download|zip|google_login|config|bootstrap|auth_style|router)$ [NC]
+  RewriteRule ^ /%1 [R=301,L]
+
+  # 2) Sajikan file .php-nya secara diam-diam untuk URL tanpa .php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.php -f
+  RewriteRule ^(.+?)/?$ $1.php [L]
 </IfModule>
 
 # (Mematikan mesin PHP HANYA dilakukan di uploads/.htaccess, TIDAK di sini —
