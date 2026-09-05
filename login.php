@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Masuk — <?= e(APP_NAME) ?></title>
 <?php include __DIR__ . '/auth_style.php'; ?>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head><body>
   <form class="box" method="post" autocomplete="off">
     <div class="logo">📋</div>
@@ -48,6 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="field"><label>Password</label>
       <input type="password" name="password" required></div>
     <button type="submit">Masuk</button>
+    <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:#94a3b8;font-size:12px"><span style="flex:1;height:1px;background:#e2e8f0"></span>atau<span style="flex:1;height:1px;background:#e2e8f0"></span></div>
+    <div id="g_id_onload" data-client_id="<?= e(GOOGLE_CLIENT_ID) ?>" data-callback="onGoogleLogin" data-auto_prompt="false"></div>
+    <div class="g_id_signin" data-type="standard" data-theme="outline" data-size="large" data-text="signin_with" data-shape="rectangular" data-logo_alignment="center" style="display:flex;justify-content:center"></div>
     <div class="hint"><a href="lupa.php" style="color:#0d9488;font-weight:700;text-decoration:none">Lupa password?</a></div>
   </form>
+<script>
+function onGoogleLogin(resp){
+  var b=document.querySelector('.g_id_signin'); if(b) b.style.opacity='.5';
+  fetch('google_login.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'credential='+encodeURIComponent(resp.credential)})
+    .then(function(r){return r.json();})
+    .then(function(j){ if(j&&j.ok){ location.href='index.php'; } else { alert((j&&j.error)||'Gagal masuk dengan Google.'); if(b) b.style.opacity='1'; } })
+    .catch(function(){ alert('Gagal menghubungi server.'); if(b) b.style.opacity='1'; });
+}
+</script>
 </body></html>

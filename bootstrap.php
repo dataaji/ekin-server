@@ -6,6 +6,10 @@
 
 require __DIR__ . '/config.php';
 
+// Client ID Google Sign-In (PUBLIK, bukan rahasia — memang tampil di halaman).
+// Bisa ditimpa lewat config.php bila suatu saat ganti.
+if (!defined('GOOGLE_CLIENT_ID')) define('GOOGLE_CLIENT_ID', '755547037507-c4n031pf3av7tsv4fjr2e3g5t7mcn6rt.apps.googleusercontent.com');
+
 date_default_timezone_set(APP_TZ);
 mb_internal_encoding('UTF-8');
 
@@ -73,7 +77,7 @@ try {
    (Google Drive) itu menambah puluhan milidetik tiap klik. Sekarang dijaga
    penanda versi: kalau skema sudah sesuai, blok ini dilewati seluruhnya.
    Naikkan SKEMA_VERSI setiap kali ada tabel/kolom baru. */
-define('SKEMA_VERSI', '2026-09-04c');
+define('SKEMA_VERSI', '2026-09-05a');
 $__perluMigrasi = true;
 try {
   $__v = $pdo->query("SELECT v FROM appmeta WHERE k='skema_versi'")->fetchColumn();
@@ -180,6 +184,7 @@ if ($IS_SQLITE) {
 $__alter = function($sql) use ($pdo){ try{ $pdo->exec($sql); }catch(Throwable $e){} };
 if ($IS_SQLITE) {
   $__alter("ALTER TABLE users ADD COLUMN recovery_hash TEXT");
+  $__alter("ALTER TABLE users ADD COLUMN email TEXT");
   $__alter("ALTER TABLE subkegiatan ADD COLUMN target INTEGER DEFAULT 0");
   $__alter("ALTER TABLE subkegiatan ADD COLUMN satuan TEXT");
   $__alter("ALTER TABLE harian ADD COLUMN jumlah INTEGER DEFAULT 0");
@@ -203,6 +208,7 @@ if ($IS_SQLITE) {
   $__alter("ALTER TABLE aspekiki ADD COLUMN target INTEGER DEFAULT 0");
 } else {
   $__alter("ALTER TABLE users ADD COLUMN recovery_hash VARCHAR(255) NULL");
+  $__alter("ALTER TABLE users ADD COLUMN email VARCHAR(190) NULL");
   $__alter("ALTER TABLE subkegiatan ADD COLUMN target INT DEFAULT 0");
   $__alter("ALTER TABLE subkegiatan ADD COLUMN satuan VARCHAR(40) NULL");
   $__alter("ALTER TABLE harian ADD COLUMN jumlah INT DEFAULT 0");
@@ -238,6 +244,7 @@ $__idx = [
   ['idx_sub_kegbulan', 'subkegiatan', 'kegiatan_id,bulan_ke'],
   ['idx_ekin_bulan',   'ekinfile',    'kegiatan_id,bulan_ke'],
   ['idx_ekin_raksi',   'ekinfile',    'rhk_id,raksi_id'],
+  ['idx_users_email',  'users',       'email'],
 ];
 foreach ($__idx as $ix) {
   $sqlIdx = $IS_SQLITE

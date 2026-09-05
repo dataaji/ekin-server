@@ -2,6 +2,6 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/vork2425/public_html/ekinerja.vortatech.site
-    - /bin/cp api.php auth_style.php bootstrap.php download.php index.php login.php logout.php lupa.php profil.php rekap.php router.php setup.php zip.php .htaccess .user.ini $DEPLOYPATH/
+    - /bin/cp api.php auth_style.php bootstrap.php download.php google_login.php index.php login.php logout.php lupa.php profil.php rekap.php router.php setup.php zip.php .htaccess .user.ini $DEPLOYPATH/
     - /bin/cp data/.htaccess $DEPLOYPATH/data/
     - /bin/cp uploads/.htaccess $DEPLOYPATH/uploads/
